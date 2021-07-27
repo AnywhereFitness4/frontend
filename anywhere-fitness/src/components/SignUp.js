@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import schema from '../validation/SignupSchema';
 import * as yup from 'yup';
 import axios from 'axios'
@@ -76,6 +76,13 @@ const initialValues = {
         
           setValues({ ...values, [name]:value })
       }
+
+      useEffect(() => {
+        schema.isValid(values)
+        .then(valid=> {
+          setDisabled(!valid)
+        })
+        },[values])
     
 
     const addUser = (newUsers) => {
@@ -83,8 +90,7 @@ const initialValues = {
     .post('https://anywhere-fitness-4u.herokuapp.com/api/users/register', newUsers)
     .then(res => {
         setUsers([res.data, ...values])
-
-    })
+        })
     .catch(err => {
       console.log({err})
     })
@@ -92,6 +98,7 @@ const initialValues = {
 const newUser = (e) => {
     e.preventDefault();
     addUser(values)
+    alert('signup successful')
 }
 return (
 <ContainerSignup>
@@ -149,7 +156,7 @@ return (
                     <option value="instructor">instructor</option>
             </select>
         </label>
-        <button>Sign Up</button>
+        <button disabled={disabled}>Sign Up</button>
     </form>
 </ContainerSignup>
 
