@@ -2,25 +2,48 @@ import React, { useState } from 'react';
 import schema from '../validation/SignupSchema';
 import * as yup from 'yup';
 import axios from 'axios'
+import styled from 'styled-components'
 
 const initialValues = {
+    name:'',
     username:'',
     email:'',
     password: '',
-    client: false,
-    instructor: false,
+    role:'',
     }
   
   const initialErrors = {
+    name:'',
     username:'',
     email:'',
     password:'',
+    role:'',
     }
   
   const initialUsers = []
   const isDisabled = true   
-  const url = 'url'
+
   
+  const ContainerSignup = styled.div`
+  display:flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  align-items: center;
+  margin: 0 0 0 10rem;
+
+
+  .form-container{
+      display:flex;
+      flex-direction: column;
+      flex-wrap: wrap;
+      justify-content: center;
+      border:2px solid gray;
+      border-radius:2%;
+      padding:1rem;
+    }
+
+  `
+
   export default function SignUp() {
 
     const [values, setValues] = useState(initialValues)
@@ -29,27 +52,35 @@ const initialValues = {
     const [users, setUsers] = useState(initialUsers)
 
     const onChange = (event) => {
-        const { name, value } = event.target;
-        inputChange(name, value);
+        const {name, value, type, checked} = event.target
+        const valueToUse = type === 'checkbox' ? checked : value
+        inputChange(name, valueToUse);
     }
 
-    const inputChange = (name, value) => {
-
-        yup.reach(schema, name)
-            .validate(value)
-            .then(() => {
-                setErrors({ ...errors, [name]: '' })
+    const inputChange = ( name, value ) => {
+        yup
+          .reach(schema, name)
+          .validate(value)
+          .then(() => {
+            setErrors({
+              ...errors,
+              [ name ] : "",
             })
-            .catch((err) => {
-                setErrors({ ...errors, [name]: err.errors[0] })
+          })
+          .catch(err => {
+            setErrors({
+              ...errors,
+              [name] : err.errors[0],
             })
-
-        setUsers({ ...users, [name]: value })
-    }
+          })
+        
+          setValues({ ...values, [name]:value })
+      }
+    
 
     const addUser = (newUsers) => {
     axios
-    .post(url, newUsers)
+    .post('https://anywhere-fitness-4u.herokuapp.com/api/users/register', newUsers)
     .then(res => {
         setUsers([res.data, ...values])
 
@@ -63,14 +94,27 @@ const newUser = (e) => {
     addUser(values)
 }
 return (
-<div>
+<ContainerSignup>
     <h2>Sign Up</h2>
     <div className="errors">
         <div>{errors.username}</div>
         <div>{errors.email}</div>
         <div>{errors.password}</div>
+        <div>{errors.name}</div>
+        <div>{errors.role}</div>
     </div>
     <form className ='form-container' onSubmit={newUser}>
+
+        
+    <label>Name:
+            <input
+            type='name'
+            value = {values.name}
+            onChange={onChange}
+            name='name'
+            />
+    </label>
+
         <label>Username:
             <input
             type='text'
@@ -79,6 +123,7 @@ return (
             name='username'
             />
         </label>
+
         <label>Email:
             <input
             type='email'
@@ -87,6 +132,7 @@ return (
             name='email'
             />
         </label>
+
         <label>Password:
             <input
             type="password"
@@ -95,25 +141,17 @@ return (
             name="password"
             />
         </label>
-        <label>Instructor
-            <input
-            type='checkbox'
-            checked={values.instructor}
-            name='instructor'
-            onChange={onChange}
-            />
-        </label>
-        <label>Client
-            <input
-            type='checkbox'
-            checked={values.client}
-            name='client'
-            onChange={onChange}
-            />
+
+        <label>Role
+            <select name="role" id='role-dropdown' value={values.role} onChange={onChange}>
+                    <option value="">-Select Role-</option>
+                    <option value="client">client</option>
+                    <option value="instructor">instructor</option>
+            </select>
         </label>
         <button>Sign Up</button>
     </form>
-</div>
+</ContainerSignup>
 
 )
 
