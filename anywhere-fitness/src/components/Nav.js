@@ -1,4 +1,4 @@
-import react from "react";
+import React from "react";
 import { Route, Switch, Link } from 'react-router-dom'
 import styled from 'styled-components'
 import Landing from './Landing'
@@ -44,6 +44,9 @@ export default function f (props){
                     </li>
                     <li>
                         <Link to="/signup">Sign-Up</Link>
+                    </li>
+                    <li>
+                        <Link to="/search">Class Search</Link>
                     </li>
                     </ul> 
                 </nav>
