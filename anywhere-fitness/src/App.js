@@ -11,6 +11,8 @@ import Landing from './components/Landing'
 import SignUp from './components/SignUp'
 import Class from './components/Class'
 import SearchBar from './components/SearchBar'
+import PrivateRoute from './components/PrivateRoute';
+import ClassForm from './components/ClassForm'
 
 const StyledApp = styled.div`
   display: flex;
@@ -76,6 +78,7 @@ const filteredClasses = filterClasses(classes, searchQuery)
         )
       })}
         </Route>
+        <PrivateRoute path='/classes/:id' component={ClassForm}/>
       </Switch>
     </StyledApp>
   );
